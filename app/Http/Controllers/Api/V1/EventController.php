@@ -13,6 +13,7 @@ class EventController extends ApiController
     public function index(Request $request)
     {
         $events = Event::query()
+            ->with('images')
             ->when($request->query('category'), fn ($query, $category) => $query->where('category', $category))
             ->whereIn('status', ['open', 'waitlist', 'full'])
             ->orderByRaw('starts_at is null')
@@ -24,7 +25,7 @@ class EventController extends ApiController
 
     public function show(Event $event)
     {
-        return $this->ok($event->loadCount([
+        return $this->ok($event->load('images')->loadCount([
             'invitations as confirmed_count' => fn ($query) => $query->where('status', 'accepted'),
         ]));
     }

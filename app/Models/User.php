@@ -21,6 +21,26 @@ class User extends Authenticatable
     /** @use HasFactory<UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
+    protected $appends = ['is_admin'];
+
+    public function getIsAdminAttribute(): bool
+    {
+        return $this->isAdmin();
+    }
+
+    public function isAdmin(): bool
+    {
+        $emails = collect(explode(',', (string) env('ADMIN_EMAILS', '')))
+            ->map(fn (string $email) => trim(strtolower($email)))
+            ->filter();
+
+        if ($emails->isNotEmpty()) {
+            return $emails->contains(strtolower($this->email));
+        }
+
+        return (int) $this->id === 1;
+    }
+
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
@@ -64,6 +84,11 @@ class User extends Authenticatable
     public function verificationRequests(): HasMany
     {
         return $this->hasMany(VerificationRequest::class);
+    }
+
+    public function supportTickets(): HasMany
+    {
+        return $this->hasMany(SupportTicket::class);
     }
 
     /**

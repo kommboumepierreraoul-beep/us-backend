@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\VerificationRequest;
+use App\Services\AdminNotificationService;
 use App\Services\CloudinaryService;
+use App\Services\ProfileCertificationService;
 use Illuminate\Http\Request;
 
 class VerificationController extends ApiController
@@ -21,7 +23,7 @@ class VerificationController extends ApiController
         return $this->ok($items);
     }
 
-    public function submitSelfie(Request $request, CloudinaryService $cloudinary)
+    public function submitSelfie(Request $request, CloudinaryService $cloudinary, AdminNotificationService $adminNotifications, ProfileCertificationService $certification)
     {
         $data = $request->validate([
             'selfie' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
@@ -37,6 +39,14 @@ class VerificationController extends ApiController
             'cloudinary_public_id' => $upload['public_id'],
             'image_url' => $upload['url'],
         ]);
+
+        $adminNotifications->notify(
+            'Verification selfie en attente',
+            'Un utilisateur a soumis un selfie a verifier.',
+            '/admin/verifications',
+            ['verification_id' => $verification->id, 'user_id' => $request->user()->id]
+        );
+        $certification->refresh($request->user()->refresh());
 
         return $this->ok($verification, 'Selfie envoye pour verification.', status: 201);
     }

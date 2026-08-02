@@ -8,6 +8,7 @@ use App\Models\Photo;
 use App\Models\Profile;
 use App\Models\Report;
 use App\Models\User;
+use App\Services\AdminNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -33,7 +34,7 @@ class ModerationController extends ApiController
         return $this->ok(null, 'Utilisateur debloque.');
     }
 
-    public function report(Request $request)
+    public function report(Request $request, AdminNotificationService $adminNotifications)
     {
         $data = $request->validate([
             'type' => ['required', Rule::in(['profile', 'message', 'photo', 'user'])],
@@ -60,6 +61,13 @@ class ModerationController extends ApiController
             'details' => $data['details'] ?? null,
             'priority' => in_array($data['category'], ['danger', 'harassment'], true) ? 3 : 1,
         ]);
+
+        $adminNotifications->notify(
+            'Nouveau signalement',
+            'Un signalement '.$data['category'].' attend une action de moderation.',
+            '/admin/reports',
+            ['report_id' => $report->id, 'priority' => $report->priority]
+        );
 
         return $this->ok($report, 'Signalement enregistre.', status: 201);
     }

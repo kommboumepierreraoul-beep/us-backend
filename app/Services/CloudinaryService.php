@@ -18,6 +18,16 @@ class CloudinaryService
         return $this->uploadImage($file, trim(config('cloudinary.verification_folder'), '/').'/'.$type);
     }
 
+    public function uploadEventImage(UploadedFile $file): array
+    {
+        return $this->uploadImage($file, trim(config('cloudinary.folder'), '/').'/events');
+    }
+
+    public function uploadSupportAttachment(UploadedFile $file): array
+    {
+        return $this->uploadImage($file, trim(config('cloudinary.folder'), '/').'/support');
+    }
+
     private function uploadImage(UploadedFile $file, string $folder): array
     {
         $cloudName = config('cloudinary.cloud_name');

@@ -11,7 +11,8 @@ class Profile extends Model
     protected $fillable = [
         'user_id', 'university_id', 'first_name', 'birth_date', 'gender', 'looking_for',
         'bio', 'study_level', 'languages', 'intentions', 'visibility',
-        'completion_score', 'university_changed_at',
+        'completion_score', 'certification_score', 'certification_status',
+        'certified_at', 'certification_notified_at', 'university_changed_at',
     ];
 
     protected function casts(): array
@@ -20,6 +21,8 @@ class Profile extends Model
             'birth_date' => 'date',
             'languages' => 'array',
             'intentions' => 'array',
+            'certified_at' => 'datetime',
+            'certification_notified_at' => 'datetime',
             'university_changed_at' => 'datetime',
         ];
     }

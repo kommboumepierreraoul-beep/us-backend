@@ -6,6 +6,7 @@ use App\Http\Resources\ProfileResource;
 use App\Models\Interest;
 use App\Models\Photo;
 use App\Services\CloudinaryService;
+use App\Services\ProfileCertificationService;
 use App\Services\ProfileCompletionService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -17,7 +18,7 @@ class ProfileController extends ApiController
         return $this->ok(new ProfileResource($request->user()->profile->load(['user.photos', 'university', 'interests'])));
     }
 
-    public function update(Request $request, ProfileCompletionService $completion)
+    public function update(Request $request, ProfileCompletionService $completion, ProfileCertificationService $certification)
     {
         $profile = $request->user()->profile;
         $data = $request->validate([
@@ -57,15 +58,16 @@ class ProfileController extends ApiController
         }
 
         $profile->update(['completion_score' => $completion->score($profile->refresh())]);
+        $certification->refresh($request->user()->refresh());
 
         return $this->ok(new ProfileResource($profile->load(['user.photos', 'university', 'interests'])), 'Profil mis a jour.');
     }
 
-    public function addPhoto(Request $request, ProfileCompletionService $completion, CloudinaryService $cloudinary)
+    public function addPhoto(Request $request, ProfileCompletionService $completion, CloudinaryService $cloudinary, ProfileCertificationService $certification)
     {
         $data = $request->validate([
             'photo' => ['required_without_all:url,photos', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
-            'photos' => ['required_without_all:url,photo', 'array', 'max:6'],
+            'photos' => ['required_without_all:url,photo', 'array', 'max:10'],
             'photos.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'url' => ['required_without_all:photo,photos', 'url', 'max:2048'],
             'cloudinary_public_id' => ['nullable', 'string', 'max:255'],
@@ -103,6 +105,7 @@ class ProfileController extends ApiController
 
         $profile = $request->user()->profile;
         $profile->update(['completion_score' => $completion->score($profile)]);
+        $certification->refresh($request->user()->refresh());
 
         return $this->ok($photos->count() === 1 ? $photos->first() : $photos, $photos->count() > 1 ? 'Photos ajoutees.' : 'Photo ajoutee.', status: 201);
     }

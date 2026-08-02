@@ -33,7 +33,8 @@ class DiscoveryService
             ->where('user_id', '!=', $user->id)
             ->where('visibility', 'visible')
             ->whereNotIn('user_id', array_merge($blockedIds, $alreadySeenIds))
-            ->whereHas('user', fn ($q) => $q->where('status', 'active'));
+            ->whereHas('user', fn ($q) => $q->where('status', 'active'))
+            ->whereHas('user.photos', null, '>=', 2);
 
         $minAge = $filters['min_age'] ?? $preferences?->min_age;
         $maxAge = $filters['max_age'] ?? $preferences?->max_age;

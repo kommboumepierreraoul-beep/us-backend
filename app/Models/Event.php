@@ -29,4 +29,9 @@ class Event extends Model
     {
         return $this->hasMany(EventInvitation::class);
     }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(EventImage::class)->orderBy('sort_order');
+    }
 }

@@ -24,6 +24,9 @@ class NotificationResource extends JsonResource
     private function actionUrl(): string
     {
         $data = $this->data ?? [];
+        if (isset($data['url']) && is_string($data['url'])) {
+            return $data['url'];
+        }
         if ($this->category === 'message' && isset($data['conversation_id'])) {
             return '/dashboard/messages?conversation='.$data['conversation_id'];
         }

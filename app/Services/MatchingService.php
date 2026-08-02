@@ -14,7 +14,10 @@ use Illuminate\Validation\ValidationException;
 
 class MatchingService
 {
-    public function __construct(private readonly PushNotificationService $pushNotifications) {}
+    public function __construct(
+        private readonly PushNotificationService $pushNotifications,
+        private readonly ProfileCertificationService $certification,
+    ) {}
 
     public function like(User $sender, User $receiver, string $type = 'like'): array
     {
@@ -44,6 +47,9 @@ class MatchingService
                 ->exists();
 
             if (! $reciprocal) {
+                $this->certification->refresh($sender->refresh());
+                $this->certification->refresh($receiver->refresh());
+
                 return ['like' => $like, 'match' => null, 'conversation' => null];
             }
 
@@ -72,6 +78,7 @@ class MatchingService
                     'data' => ['match_id' => $match->id, 'conversation_id' => $conversation->id],
                 ]);
                 $this->pushNotifications->sendToUser($member, $notification);
+                $this->certification->refresh($member->refresh());
             }
 
             return ['like' => $like, 'match' => $match, 'conversation' => $conversation];

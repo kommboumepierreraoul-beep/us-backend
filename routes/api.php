@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\AdminController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\DevMailController;
 use App\Http\Controllers\Api\V1\DiscoveryController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Api\V1\PaymentController;
 use App\Http\Controllers\Api\V1\PremiumController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\PushSubscriptionController;
+use App\Http\Controllers\Api\V1\SupportTicketController;
 use App\Http\Controllers\Api\V1\UniversityController;
 use App\Http\Controllers\Api\V1\VerificationController;
 use Illuminate\Support\Facades\Route;
@@ -112,5 +114,28 @@ Route::prefix('v1')->group(function () use (
 
         Route::get('/premium/subscription', [PremiumController::class, 'subscription']);
         Route::post('/payments/mobile-money/intents', [PaymentController::class, 'createIntent']);
+        Route::get('/support/tickets', [SupportTicketController::class, 'index']);
+        Route::post('/support/tickets', [SupportTicketController::class, 'store'])->middleware($reportsThrottle);
+
+        Route::prefix('admin')->group(function () {
+            Route::get('/overview', [AdminController::class, 'overview']);
+            Route::get('/users', [AdminController::class, 'users']);
+            Route::get('/users/{user}', [AdminController::class, 'user']);
+            Route::patch('/users/{user}/status', [AdminController::class, 'updateUserStatus']);
+            Route::get('/reports', [AdminController::class, 'reports']);
+            Route::patch('/reports/{report}', [AdminController::class, 'updateReport']);
+            Route::get('/payments', [AdminController::class, 'payments']);
+            Route::get('/messages', [AdminController::class, 'messages']);
+            Route::get('/events', [AdminController::class, 'events']);
+            Route::post('/events', [AdminController::class, 'storeEvent']);
+            Route::post('/events/{event}', [AdminController::class, 'updateEvent']);
+            Route::patch('/events/{event}', [AdminController::class, 'updateEvent']);
+            Route::get('/support', [AdminController::class, 'supportTickets']);
+            Route::patch('/support/{ticket}', [AdminController::class, 'updateSupportTicket']);
+            Route::get('/verifications', [AdminController::class, 'verifications']);
+            Route::patch('/verifications/{verification}', [AdminController::class, 'updateVerification']);
+            Route::get('/certifications', [AdminController::class, 'certifications']);
+            Route::post('/users/{user}/certify', [AdminController::class, 'certify']);
+        });
     });
 });

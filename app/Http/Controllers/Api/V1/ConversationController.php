@@ -8,6 +8,7 @@ use App\Models\Block;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\UserNotification;
+use App\Services\ProfileCertificationService;
 use App\Services\PushNotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -55,7 +56,7 @@ class ConversationController extends ApiController
         )->response()->getData(true));
     }
 
-    public function send(Request $request, Conversation $conversation, PushNotificationService $pushNotifications)
+    public function send(Request $request, Conversation $conversation, PushNotificationService $pushNotifications, ProfileCertificationService $certification)
     {
         $this->authorizeMember($request, $conversation);
         abort_if($conversation->status !== 'active', 403, 'Conversation fermee.');
@@ -117,6 +118,7 @@ class ConversationController extends ApiController
                 $pushNotifications->sendToUser($recipient, $notification);
             }
         }
+        $certification->refresh($request->user()->refresh());
 
         return $this->ok(new MessageResource($message), 'Message envoye.', status: 201);
     }

@@ -18,7 +18,7 @@ class ProfileCompletionService
             count($profile->languages ?? []) > 0,
             count($profile->intentions ?? []) > 0,
             $profile->interests()->exists(),
-            $profile->user?->photos()->exists(),
+            ($profile->user?->photos()->count() ?? 0) >= 2,
         ];
 
         return (int) round((count(array_filter($checks)) / count($checks)) * 100);
