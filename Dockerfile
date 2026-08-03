@@ -28,7 +28,7 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 # Optimiser Laravel pour la prod
 RUN php artisan config:cache && php artisan route:cache && php artisan view:cache
 
-EXPOSE 9000
+EXPOSE 80
 
 # Commande de démarrage : migrations + seeders + PHP-FPM
 CMD php artisan migrate --force && php artisan db:seed --force && php-fpm
