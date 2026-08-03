@@ -1,5 +1,5 @@
 # Étape 1 : Image PHP avec FPM
-FROM php:8.2-fpm
+FROM php:8.4-fpm
 
 # Installer dépendances système et extensions PHP nécessaires
 RUN apt-get update && apt-get install -y \
