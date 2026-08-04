@@ -50,7 +50,7 @@ RUN chmod -R 775 storage bootstrap/cache
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-EXPOSE 80
+EXPOSE 10000
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["apache2-foreground"]
