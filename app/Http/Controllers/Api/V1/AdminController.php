@@ -8,7 +8,6 @@ use App\Models\EventImage;
 use App\Models\Like;
 use App\Models\Message;
 use App\Models\Payment;
-use App\Models\Photo;
 use App\Models\Profile;
 use App\Models\Report;
 use App\Models\Subscription;

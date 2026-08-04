@@ -58,7 +58,9 @@ class ProfileCertificationService
     public function score(User $user): int
     {
         $profile = $user->profile;
-        if (! $profile) return 0;
+        if (! $profile) {
+            return 0;
+        }
 
         $completion = (int) ($profile->completion_score ?? 0);
         $approvedVerifications = $user->verificationRequests()->where('status', 'approved')->count();

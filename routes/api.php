@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AdminController;
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ConversationController;
 use App\Http\Controllers\Api\V1\DevMailController;
 use App\Http\Controllers\Api\V1\DiscoveryController;

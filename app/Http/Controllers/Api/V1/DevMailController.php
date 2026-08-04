@@ -10,7 +10,12 @@ class DevMailController extends ApiController
 {
     public function sendBrevoTest(Request $request, BrevoMailService $mail)
     {
-        abort_unless(app()->environment('local'), 404);
+        if (! app()->environment('local')) {
+            $token = config('services.brevo.test_token');
+
+            abort_if(blank($token), 404, 'Route de test email desactivee.');
+            abort_unless(hash_equals($token, (string) $request->query('token')), 403, 'Token de test email invalide.');
+        }
 
         $data = $request->isMethod('post')
             ? $request->validate(['to' => ['nullable', 'email']])

@@ -33,6 +33,7 @@ FILESYSTEM_DISK=local
 MAIL_MAILER=brevo_api
 VAPID_SUBJECT="${APP_URL}"
 LOG_LEVEL=info
+DEV_MAIL_TEST_TOKEN=une-valeur-longue-aleatoire
 ```
 
 ## Notes
@@ -41,3 +42,5 @@ LOG_LEVEL=info
 - La base PostgreSQL gratuite Render peut expirer selon les conditions du plan gratuit.
 - Le service gratuit dort apres inactivite, donc la premiere requete peut etre lente.
 - Si vous ajoutez un worker payant plus tard, repasser `QUEUE_CONNECTION=database` et lancer un service worker avec `php artisan queue:work`.
+- La route de test Brevo en production demande `DEV_MAIL_TEST_TOKEN` :
+  `GET /api/v1/dev/brevo/test-email?token=...`
