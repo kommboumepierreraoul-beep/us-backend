@@ -50,6 +50,10 @@ class BrevoMailService
             'textContent' => $text,
         ];
 
+        if (! filter_var($payload['sender']['email'], FILTER_VALIDATE_EMAIL)) {
+            throw new RuntimeException('Adresse expediteur Brevo invalide: '.$payload['sender']['email']);
+        }
+
         if ($html) {
             $payload['htmlContent'] = $html;
         }
