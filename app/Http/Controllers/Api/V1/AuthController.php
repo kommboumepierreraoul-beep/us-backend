@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use RuntimeException;
 
 class AuthController extends ApiController
 {
@@ -98,7 +99,11 @@ class AuthController extends ApiController
 
         $profile->update(['completion_score' => $completion->score($profile->refresh())]);
 
-        $debugCode = $emailOtp->send($user, $request->ip(), force: true);
+        try {
+            $debugCode = $emailOtp->send($user, $request->ip(), force: true);
+        } catch (RuntimeException $exception) {
+            return $this->fail($exception->getMessage(), [], 502);
+        }
 
         return $this->ok([
             'user' => $user->load(['profile.university', 'profile.interests', 'photos', 'discoveryPreference']),
@@ -165,7 +170,11 @@ class AuthController extends ApiController
 
     public function resendEmailOtp(Request $request, EmailOtpService $emailOtp)
     {
-        $debugCode = $emailOtp->send($request->user(), $request->ip());
+        try {
+            $debugCode = $emailOtp->send($request->user(), $request->ip());
+        } catch (RuntimeException $exception) {
+            return $this->fail($exception->getMessage(), [], 502);
+        }
 
         return $this->ok([
             'email' => $request->user()->email,
@@ -191,7 +200,11 @@ class AuthController extends ApiController
             'email' => ['required', 'email'],
         ]);
 
-        $debugCode = $passwordResetOtp->send($data['email'], $request->ip());
+        try {
+            $debugCode = $passwordResetOtp->send($data['email'], $request->ip());
+        } catch (RuntimeException $exception) {
+            return $this->fail($exception->getMessage(), [], 502);
+        }
 
         return $this->ok([
             'email' => $data['email'],

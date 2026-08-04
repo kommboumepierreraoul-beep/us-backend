@@ -39,6 +39,7 @@ Route::prefix('v1')->group(function () use (
     $reportsThrottle
 ) {
     Route::get('/health', HealthController::class);
+    Route::get('/dev/brevo/status', [DevMailController::class, 'brevoStatus']);
     Route::get('/dev/brevo/test-email', [DevMailController::class, 'sendBrevoTest']);
     Route::post('/dev/brevo/test-email', [DevMailController::class, 'sendBrevoTest']);
     Route::get('/universities', [UniversityController::class, 'index']);

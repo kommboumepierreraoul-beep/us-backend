@@ -44,3 +44,5 @@ DEV_MAIL_TEST_TOKEN=une-valeur-longue-aleatoire
 - Si vous ajoutez un worker payant plus tard, repasser `QUEUE_CONNECTION=database` et lancer un service worker avec `php artisan queue:work`.
 - La route de test Brevo en production demande `DEV_MAIL_TEST_TOKEN` :
   `GET /api/v1/dev/brevo/test-email?token=...`
+- Diagnostic sans secret :
+  `GET /api/v1/dev/brevo/status`

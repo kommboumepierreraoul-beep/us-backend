@@ -8,6 +8,19 @@ use RuntimeException;
 
 class DevMailController extends ApiController
 {
+    public function brevoStatus()
+    {
+        return $this->ok([
+            'environment' => app()->environment(),
+            'mailer' => config('mail.default'),
+            'brevo_api_key_configured' => filled(config('services.brevo.key')),
+            'brevo_url_configured' => filled(config('services.brevo.url')),
+            'brevo_sender_email' => config('services.brevo.sender_email'),
+            'brevo_sender_name' => config('services.brevo.sender_name'),
+            'test_token_configured' => filled(config('services.brevo.test_token')),
+        ], 'Diagnostic Brevo.');
+    }
+
     public function sendBrevoTest(Request $request, BrevoMailService $mail)
     {
         if (! app()->environment('local')) {
